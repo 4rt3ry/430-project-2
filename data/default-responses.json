@@ -1,0 +1,21 @@
+{
+    "responses": {
+        
+    },
+    "errors": {
+        "insufficient_quota": {
+            "messages": [
+                "I'm sorry, my brain hurts right now so I can't think of a response",
+                "You have reached the extent of my patience. I'm done talking for now",
+                "My patience is running low, please stop talking",
+                "I don't have the time for this, talk to you later",
+                "Will you please just give me a few minutes?"
+            ]
+        },
+        "default": {
+            "messages": [
+                "I don't know what to say"
+            ]
+        }
+    }
+}

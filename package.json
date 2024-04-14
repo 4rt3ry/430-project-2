@@ -1,0 +1,71 @@
+{
+  "name": "430-project-2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./server/server.ts",
+  "scripts": {
+    "pretest": "eslint ./server/**/* --fix",
+    "test": "echo \"Tests Complete\"",
+    "start": "node ./server/app.bundle.js",
+    "build": "npm run bundle-front & npm run bundle-back",
+    "bundle-front": "webpack --config ./webpack-front.config.js",
+    "bundle-back": "webpack --config ./webpack-back.config.js",
+    "webpack": "webpack watch",
+    "heroku-postbuild": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/4rt3ry/430-project-1.git"
+  },
+  "author": "4rt3ry / Arthur Powers",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/4rt3ry/430-project/issues"
+  },
+  "homepage": "https://github.com/4rt3ry/430-project#readme",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.2",
+    "compression": "^1.7.4",
+    "connect-redis": "^7.1.1",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-handlebars": "^7.1.2",
+    "express-session": "^1.18.0",
+    "helmet": "^7.1.0",
+    "mongoose": "^8.3.1",
+    "openai": "^4.33.0",
+    "redis": "^4.6.13",
+    "serve-favicon": "^2.5.0",
+    "underscore": "^1.13.6"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/body-parser": "^1.19.5",
+    "@types/compression": "^1.7.5",
+    "@types/express": "^4.17.21",
+    "@types/express-session": "^1.18.0",
+    "@types/node": "^20.12.7",
+    "@types/react": "^18.2.78",
+    "@types/react-dom": "^18.2.25",
+    "@types/serve-favicon": "^2.5.7",
+    "@typescript-eslint/parser": "^7.6.0",
+    "eslint": "^8.57.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-plugin-import": "^2.29.1",
+    "nodemon": "^3.1.0",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.4.5",
+    "typescript-eslint": "^7.6.0",
+    "webpack": "^5.91.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-node-externals": "^3.0.0"
+  },
+  "keywords": [
+    "Node",
+    "MVC",
+    "Redis",
+    "Login",
+    "Chat GPT"
+  ]
+}
