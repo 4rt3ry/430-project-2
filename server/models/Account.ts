@@ -1,14 +1,29 @@
 import bcrypt from 'bcrypt';
-import mongoose, { InferSchemaType, MongooseError, StringExpressionOperatorReturningBoolean } from 'mongoose';
+import mongoose from 'mongoose';
 
 const saltRounds = 10;
 
-interface RedisAccount {
+interface IRedisAccount {
     username: string,
     _id: number
 }
 
-const AccountSchema = new mongoose.Schema({
+interface IAccount {
+    username: string,
+    password: string,
+    createdDate: Date
+}
+
+interface IAccountMethods {
+    authenticate(): any
+}
+
+interface IAccountModel extends mongoose.Model<IAccount, object, IAccountMethods> {
+    toAPI(): IRedisAccount,
+    generateHash(): Promise<string>,
+}
+
+const AccountSchema = new mongoose.Schema<IAccount, IAccountModel, IAccountMethods>({
     username: {
         type: String,
         required: true,
@@ -26,18 +41,17 @@ const AccountSchema = new mongoose.Schema({
     },
 });
 
-type Account = InferSchemaType<typeof AccountSchema>;
-
-let AccountModel: unknown;
+// let model: IAccountModel;
+const model = mongoose.model<IAccount, IAccountModel>('Account', AccountSchema);
 
 // Converts an account doc to something we can store in redis later on.
-AccountSchema.statics.toAPI = (doc): RedisAccount => ({
+AccountSchema.static('toAPI', (doc): IRedisAccount => ({
     username: doc.username,
     _id: doc._id,
-});
+}));
 
 // Helper function to hash a password
-AccountSchema.statics.generateHash = (password: string): Promise<string> => bcrypt.hash(password, saltRounds);
+AccountSchema.static('generateHash', (password: string): Promise<string> => bcrypt.hash(password, saltRounds));
 
 /**
  * Match a given username and password against an existing one in the database
@@ -45,13 +59,13 @@ AccountSchema.statics.generateHash = (password: string): Promise<string> => bcry
  * @param password
  * @param callback
  */
-AccountSchema.statics.authenticate = async (
+AccountSchema.method('authenticate', async (
     username: string,
     password: string,
-    callback: <T>(err?: Error | null, account?: Account) => T,
+    callback: <T>(err?: Error | null, account?: IAccount) => T,
 ) => {
     try {
-        const doc = await AccountModel.findOne({ username }).exec();
+        const doc = await model.findOne({ username }).exec();
         if (!doc) {
             return callback();
         }
@@ -62,9 +76,8 @@ AccountSchema.statics.authenticate = async (
         }
         return callback();
     } catch (err) {
-        return callback(err as MongooseError);
+        return callback(err as mongoose.MongooseError);
     }
-};
+});
 
-AccountModel = mongoose.model('Account', AccountSchema);
-export { AccountModel };
+export default model;
