@@ -1,1 +1,3 @@
-export { AccountModel as Account } from './Account';
+import model from './Account';
+
+export default model;

@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = {
     entry: {
-        // app: './client/maker.jsx',
+        app: './client/app.jsx',
         login: './client/login.jsx'
     },
     module: {
@@ -12,6 +12,13 @@ module.exports = {
                 exclude: /node_modules/,
                 use: {
                     loader: 'babel-loader'
+                }
+            },
+            {
+                test: /\.(ts|tsx)$/,
+                exclude: /node_modules/,
+                use : {
+                    loader: 'ts-loader'
                 }
             }
         ]

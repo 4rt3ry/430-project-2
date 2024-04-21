@@ -1,9 +1,31 @@
 import express from 'express';
-import * as controllers from './controllers';
 import * as mid from './middleware';
+import {
+    Account, App, page404, page500
+} from './controllers';
 
 const router = (app: express.Express) => {
-    app.get('/login', mid.requiresSecure, (req: express.Request, res: express.Response) => { });
+    app.get('/', mid.requiresLogout, Account.loginPage);
+
+    // login requests
+    app.get('/login', mid.requiresSecure, mid.requiresLogout, Account.loginPage);
+    app.post('/login', mid.requiresSecure, mid.requiresLogout, Account.login);
+    app.post('/signup', mid.requiresSecure, mid.requiresLogout, Account.signup);
+
+    // main app
+    app.get('/app', mid.requiresSecure, mid.requiresLogin, App.main);
+
+    app.get('/personalChatId', mid.requiresSecure, Account.getPersonalChatId)
+
+    app.get('/404', page404);
+    app.get('/500', page500);
+
+    // setup 404 page
+    app.use((req: express.Request, res: express.Response) => {
+        if (req.accepts('html')) {
+            page404(req, res);
+        }
+    });
 };
 
 export default router;

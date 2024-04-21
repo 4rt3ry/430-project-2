@@ -1,48 +1,55 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
+import { handleError, clearError, sendPost } from './helper';
 
+/**
+ * Sends a login request with user credentials
+ * @param {SubmitEvent} e 
+ * @returns 
+ */
 const handleLogin = (e) => {
     e.preventDefault();
 
-    // TODO
-    // helper.hideError();
+    clearError();
 
     const username = e.target.querySelector('#user').value;
     const pass = e.target.querySelector('#pass').value;
 
     if (!username || !pass) {
-        helper.handleError("Username or password is empty!");
+        handleError("Username or password is empty!");
         return false;
     }
 
-    // TODO
-    // helper.sendPost(e.target.action, { username, pass });
+    // take url from the form's action attribute
+    sendPost(e.target.action, { username, pass });
     return false;
 }
 
+/**
+ * Sends an account creation request
+ * @param {SubmitEvent} e 
+ * @returns 
+ */
 const handleSignup = (e) => {
     e.preventDefault();
-    // TODO
-    // helper.hideError();
+    clearError();
 
     const username = e.target.querySelector("#user").value;
     const pass = e.target.querySelector("#pass").value;
     const pass2 = e.target.querySelector("#pass2").value;
 
     if (!username || !pass || !pass2) {
-        // TODO
-        // helper.handleError("All fields are required");
+        handleError("All fields are required");
         return false;
     }
 
     if (pass !== pass2) {
-        // TODO
-        // helper.handleError("Paswords do not match!");
+        handleError("Paswords do not match!");
         return false;
     }
 
-    // TODO
-    // helper.sendPost(e.target.action, { username, pass, pass2 });
+    // take url from the form's action attribute
+    sendPost(e.target.action, { username, pass, pass2 });
 
     return false;
 }
