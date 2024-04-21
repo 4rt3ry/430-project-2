@@ -59,24 +59,44 @@ const signup = async (req: Request, res: Response) => {
 /**
  * Retrieve the user's chat id. Users can communicate
  * by connecting to each other's chat id.
- * @param req 
- * @param res 
+ * @param req
+ * @param res
  */
 const getPersonalChatId = async (req: Request, res: Response) => {
     try {
         const query = { _id: req.session.account?._id };
         const docs = await Account.findOne(query).exec();
-        return res.json({chatId: docs?._chatId})
+        return res.json({ chatId: docs?._chatId });
+    } catch {
+        return res.status(500).json({ error: 'Could not retrieve chat id' });
     }
-    catch {
-        return res.status(500).json({error: 'Could not retrieve chat id'});
+};
+
+/**
+ * Check if a user's chat id exists
+ * @param req
+ * @param res
+ */
+const checkUserChatId = async (req: Request, res: Response) => {
+    try {
+        const query = { _chatId: new mongo.ObjectId(req.query.chatId?.toString()) };
+        const docs = await Account.findOne(query).exec();
+
+        // can find id, tell user it's all ok
+        if (docs) return res.status(200).json({ message: true });
+
+        // cannot find id, probably the user's fault
+        return res.status(400).json({ message: false });
+    } catch {
+        return res.status(500).json({ message: false });
     }
-}
+};
 
 export {
     login,
     signup,
     loginPage,
     logout,
-    getPersonalChatId
+    getPersonalChatId,
+    checkUserChatId,
 };

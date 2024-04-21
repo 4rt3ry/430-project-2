@@ -1,6 +1,6 @@
 import { Application } from 'express';
-import http from 'http'
-import { Server, Socket } from 'socket.io'
+import http from 'http';
+import { Server, Socket } from 'socket.io';
 
 let io: Server;
 
@@ -10,8 +10,8 @@ const handleMessage = (socket: Socket, msg: string) => {
         if (room === socket.id) return;
 
         io.to(room).emit('chat message', msg);
-    })
-}
+    });
+};
 
 const handleRoomChange = (socket: Socket, roomId: string) => {
     socket.rooms.forEach((room: string) => {
@@ -19,7 +19,8 @@ const handleRoomChange = (socket: Socket, roomId: string) => {
         socket.leave(room);
     });
     socket.join(roomId);
-}
+    console.log(roomId);
+};
 
 const setupServer = (app: Application): http.Server => {
     const server = http.createServer(app);
@@ -31,6 +32,6 @@ const setupServer = (app: Application): http.Server => {
     });
 
     return server;
-}
+};
 
 export default setupServer;

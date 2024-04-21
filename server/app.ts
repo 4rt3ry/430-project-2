@@ -14,7 +14,7 @@ import * as redis from 'redis';
 import dotenv from 'dotenv';
 import RedisStore from 'connect-redis';
 import router from './router';
-import socketServer from './io'
+import socketServer from './io';
 
 dotenv.config();
 

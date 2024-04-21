@@ -50,8 +50,8 @@ const AccountSchema = new mongoose.Schema<IAccount, IAccountModel, IAccountMetho
     },
     _chatId: {
         type: mongoose.Types.ObjectId,
-        default: new CreateObjectId(CreateObjectId.generate(Date.now()))
-    }
+        default: new CreateObjectId(CreateObjectId.generate(Date.now())),
+    },
 });
 
 let model: IAccountModel;

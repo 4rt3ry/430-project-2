@@ -15,56 +15,23 @@ const clearError = () => {
     errorTag.innerText = "";
 }
 
-const send = (
+const send = async (
     url: string,
-    body: object,
+    body: object | null,
     handler: ResponseHandler,
     method: string
 ) => {
-    const response = fetch(url, {
+
+    let options: RequestInit = {
         method,
         headers: {
             'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(body)
-    });
-
-    response.then(response => {
-        response.json().then(responseBody => {
-
-            // handle any redirects
-            if (responseBody.redirect) {
-                window.location = responseBody.redirect;
-            }
-
-            // handle any errors
-            if (responseBody.error) {
-                handleError(responseBody.error);
-            }
-
-            if (handler) handler(responseBody);
-
-            return responseBody;
-        })
-    })
-}
-
-const sendPost = (
-    url: string,
-    data: object,
-    handler: ResponseHandler
-) => send(url, data, handler, 'POST');
-
-const sendGet = async (
-    url: string,
-    handler: ResponseHandler
-) => {
-    const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
         }
-    });
+    }
+
+    if (body) options.body = JSON.stringify(body);
+
+    const response = await fetch(url, options);
 
     const responseBody = await response.json();
 
@@ -83,6 +50,22 @@ const sendGet = async (
     return responseBody;
 }
 
+const sendPost = (
+    url: string,
+    data: object,
+    handler: ResponseHandler
+) => send(url, data, handler, 'POST');
+
+const sendHead = (
+    url: string,
+    handler: ResponseHandler
+) => send(url, null, handler, 'HEAD');
+
+const sendGet = async (
+    url: string,
+    handler: ResponseHandler
+) => send(url, null, handler, 'GET');
+
 // const sendGetAsync = async (
 //     url: string,
 //     handler: ResponseHandler
@@ -99,5 +82,6 @@ export {
     clearError,
     sendGet,
     sendPost,
+    sendHead,
     sendDelete
 }

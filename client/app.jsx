@@ -36,6 +36,27 @@ const handleMessage = (msg) => {
     document.querySelector("#messages").appendChild(newMessage);
 }
 
+const connectUser = async (e) => {
+    e.preventDefault();
+
+    // ask the server to connect with another user's chat id
+    const userChatId = e.target.querySelector("#connectUserInput");
+
+    if (!userChatId.value || userChatId.value.length === 0) return false;
+
+    // check with the server to see if chat id is valid
+    const validId = await sendGet(`/checkUserChatId?chatId=${userChatId.value}`);
+    
+    if (!validId.message) return false;
+
+    // id is valid, connect with the user
+    socket.emit('room change', userChatId.value);
+    document.querySelector("#messages").innerHTML = '';
+
+
+    return false;
+}
+
 const Messages = (props) => {
     return (
         <div id='messages'></div>
@@ -44,7 +65,25 @@ const Messages = (props) => {
 
 const Channels = (props) => {
     return (
-        <div></div>
+        <div>
+            <div><p id="personalChatId">Your ID: {personalChatId.chatId}</p></div>
+            <form
+            name="connectUser"
+            onSubmit={connectUser}
+            id="connectUserForm"
+            >
+                <input
+                    id='connectUserInput'
+                    type='text'
+                    placeholder='Type in a user ID!'
+                ></input>
+                <input
+                    className='connectSubmit'
+                    type='submit'
+                    value='Send'
+                ></input>
+            </form>
+        </div>
     )
 }
 
