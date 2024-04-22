@@ -9,9 +9,7 @@
     "start": "node ./server/app.bundle.js",
     "build": "npm run bundle-front & npm run bundle-back",
     "bundle-front": "webpack --config ./webpack-front.config.js",
-    "bundle-back": "webpack --config ./webpack-back.config.js",
-    "webpack": "webpack watch",
-    "heroku-postbuild": "webpack"
+    "bundle-back": "webpack --config ./webpack-back.config.js"
   },
   "repository": {
     "type": "git",
