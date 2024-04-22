@@ -1,6 +1,7 @@
 import { Application } from 'express';
 import http from 'http';
 import { Server, Socket } from 'socket.io';
+import sanitizeHTML from 'sanitize-html';
 
 let io: Server;
 
@@ -9,13 +10,23 @@ const handleMessage = (socket: Socket, msg: string) => {
         // don't send a message to itself
         if (room === socket.id) return;
 
-        io.to(room).emit('chat message', msg);
+        io.to(room).emit('chat message', sanitizeHTML(msg, {
+            allowedTags: [],
+            allowedAttributes: {},
+            disallowedTagsMode: 'escape',
+        }));
     });
 };
 
 const handleRoomChange = (socket: Socket, roomId: string) => {
     socket.rooms.forEach((room: string) => {
-        if (room === socket.id) return;
+        if (room === socket.id) {
+            // tell the user they successfully changed rooms
+            // this allows the user to hook events on successful
+            // room change
+            io.to(room).emit('room change', roomId);
+            return;
+        }
         socket.leave(room);
     });
     socket.join(roomId);
