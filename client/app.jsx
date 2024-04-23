@@ -1,4 +1,4 @@
-import { sendGet } from './helper'
+import { sendGet, sendPost } from './helper'
 import React from 'react'
 import { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client'
@@ -60,7 +60,7 @@ const connectUser = async (e) => {
  * @param {*} userId 
  */
 const createDMChannel = (userId) => {
-    if (userId === personalChatId) {
+    if (userId.trim() === personalChatId.chatId.trim()) {
         socket.emit('room change', userId);
     }
 
@@ -130,10 +130,10 @@ const MessageForm = (props) => {
     );
 }
 
-const PopupNotice = (props) => {
-
-    const removeNotice = () => {
-        document.querySelector("#popup").classList.add("hidden");
+const NoticePopup = (props) => {
+    const close = () => {
+        if (props.close) props.close();
+        sendPost('/account', { acceptedTOU: true })
     }
 
     return (
@@ -146,9 +146,64 @@ const PopupNotice = (props) => {
                 understands that Open BM is not responsible for any loss of
                 data or misuse of personal data.
             </p>
-            <button onClick={removeNotice}>I Agree</button>
+            <button onClick={close}>I Agree</button>
         </div>
     );
+}
+
+const ChatIdPopup = (props) => {
+    const close = () => {
+        if (props.close) props.close();
+
+        // if user inputed a new id, send it to the server
+        // TODO: validate new id (it's already done in server)
+        // perhaps create an error popup if unsucessful
+        const chatId = document.querySelector("#chatIdInput").value;
+        const send = { acceptedChatId: true };
+        if (chatId) send.chatId = chatId;
+        sendPost('/account', send);
+    }
+    
+
+    // TURN THIS INTO A FORM
+
+    return (
+        <div class='content'>
+            <h1>Select a Username</h1>
+            <input
+                id='chatIdInput'
+                type='text'
+                placeholder={props.account.chatId}
+            ></input>
+            <p>New username must be between 6 and 30 characters</p>
+            <button onClick={close}>Accept</button>
+        </div>
+    );
+}
+
+const PopupWindow = (props) => {
+
+    // Figure out a way to allow users to create their own id within a popup
+    // If a user already has an id, don't show that popup
+
+    const [popups, setPopups] = useState(props.queue);
+    const root = document.querySelector("#popup"); // surely there's a better way to do this
+
+    const nextPopup = () => {
+        if (popups.length > 0) {
+            setPopups(popup => popup.slice(1));
+            root.classList.add("hidden");
+        }
+    }
+    if (popups.length > 0) {
+        root.classList.remove("hidden");
+
+        const popupComponent = popups[0][0];
+        const popupProps = popups[0][1] ?? {};
+
+        return popupComponent({ ...popupProps, close: nextPopup });
+    }
+    return (<></>);
 }
 
 const AppWindow = (props) => {
@@ -174,12 +229,22 @@ const AppWindow = (props) => {
     )
 }
 
-const init = () => {
+const init = async () => {
+
+    // retrieve account information before continuing
+    const account = await sendGet('/account');
+
+    // Each item: [ReactComponent, props]
+    const popupQueue = [];
+    if (!account.acceptedTou) popupQueue.push([NoticePopup]);
+    if (!account.acceptedChatId) popupQueue.push([ChatIdPopup, { account }]);
+    // if (!account.acceptedChatId) popupQueue.push(<NoticePopup />);
+
     const root = createRoot(document.querySelector("#content"));
     root.render(<AppWindow></AppWindow>);
 
     const popupNotice = createRoot(document.querySelector("#popup"));
-    popupNotice.render(<PopupNotice/>);
+    popupNotice.render(<PopupWindow queue={popupQueue} />);
 
     // I decided since messages are simply created
     // with no worry of deletion or anything, I'll just update 

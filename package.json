@@ -9,7 +9,8 @@
     "start": "node ./server/app.bundle.js",
     "build": "npm run bundle-front & npm run bundle-back",
     "bundle-front": "webpack --config ./webpack-front.config.js",
-    "bundle-back": "webpack --config ./webpack-back.config.js"
+    "bundle-back": "webpack --config ./webpack-back.config.js",
+    "nodemon": "nodemon ./server/app.bundle.js"
   },
   "repository": {
     "type": "git",
@@ -31,12 +32,13 @@
     "express-handlebars": "^7.1.2",
     "express-session": "^1.18.0",
     "helmet": "^7.1.0",
-    "mongodb": "^6.5.0",
     "mongoose": "^8.3.1",
     "openai": "^4.33.0",
+    "password-validator": "^5.3.0",
     "redis": "^4.6.13",
     "sanitize-html": "^2.13.0",
     "serve-favicon": "^2.5.0",
+    "short-unique-id": "^5.0.3",
     "socket.io": "^4.7.5",
     "underscore": "^1.13.6"
   },

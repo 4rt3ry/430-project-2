@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { mongo } from 'mongoose';
+import PasswordValidator from 'password-validator';
 import Account from '../models';
 import { IAccount } from '../models/Account';
 
@@ -58,7 +59,7 @@ const signup = async (req: Request, res: Response) => {
 
 /**
  * Retrieve the user's chat id. Users can communicate
- * by connecting to each other's chat id.
+ * by connecting to each other's chat id. GET only
  * @param req
  * @param res
  */
@@ -66,20 +67,20 @@ const getPersonalChatId = async (req: Request, res: Response) => {
     try {
         const query = { _id: req.session.account?._id };
         const docs = await Account.findOne(query).exec();
-        return res.json({ chatId: docs?._chatId });
+        return res.json({ chatId: docs?.chatId });
     } catch {
         return res.status(500).json({ error: 'Could not retrieve chat id' });
     }
 };
 
 /**
- * Check if a user's chat id exists
+ * Check if a user's chat id exists. GET only
  * @param req
  * @param res
  */
 const checkUserChatId = async (req: Request, res: Response) => {
     try {
-        const query = { _chatId: new mongo.ObjectId(req.query.chatId?.toString()) };
+        const query = { chatId: req.query.chatId?.toString() };
         const docs = await Account.findOne(query).exec();
 
         // can find id, tell user it's all ok
@@ -92,6 +93,110 @@ const checkUserChatId = async (req: Request, res: Response) => {
     }
 };
 
+/**
+ * Modify account data.
+ * @param req
+ * @param res
+ * @returns
+ */
+const modifyAccount = async (req: Request, res: Response) => {
+    try {
+        // ensure user is actually logged into an account and their id exists
+        const query = { _id: req.session.account?._id };
+        const docs = await Account.findOne(query).exec();
+
+        console.log(req.body);
+
+        // handle account modifications strictly
+        if (docs) {
+            const modifications: {
+                username?: string,
+                acceptedTOU?: boolean,
+                acceptedChatId?: boolean,
+                chatId?: string,
+            } = {};
+
+            // these don't need to be secure
+            if (req.body.acceptedTOU === true) modifications.acceptedTOU = true;
+            if (req.body.acceptedChatId === true) modifications.acceptedChatId = true;
+
+            // validate any username, chatID, or password changes
+
+            const validator = new PasswordValidator();
+            validator
+                .is().min(6)
+                .is().max(30)
+                .has()
+                .not()
+                .spaces();
+
+            // check if username or chat ID already exist
+            if (req.body.username) {
+                const unameQuery = { username: req.body.username };
+                if (await Account.findOne(unameQuery).exec()) {
+                    return res.status(400).json({ error: 'Username already exists' });
+                }
+                if (validator.validate(req.body.username)) {
+                    modifications.username = req.body.username;
+                } else return res.status(400).json({ error: 'Invalid username' });
+            }
+            // check if username or chat ID already exist
+            if (req.body.chatId) {
+                const chatIdQuery = { chatId: req.body.chatId };
+                if (await Account.findOne(chatIdQuery).exec()) {
+                    return res.status(400).json({ error: 'Chat ID already exists' });
+                }
+                if (validator.validate(req.body.chatId)) {
+                    modifications.chatId = req.body.chatId;
+                } else return res.status(400).json({ error: 'Invalid chat id' });
+            }
+
+            // FOR PASSWORD CHANGES, MAKE SURE TO SAVE THE HASH
+            // if (validator.validate(req.body.password)) {
+            //         modifications.password = req.body.password;
+            // }
+            // else return res.status(400).json({ error: 'Invalid password' });
+
+            // finally make the modifications
+            if (Object.keys(modifications).length > 0) {
+            const updatedDoc = await Account.updateOne(
+                query,
+                {
+                    $set: modifications,
+                },
+            );
+            if (updatedDoc) return res.status(200).json({ message: 'Successful update' });
+        }
+            return res.status(204).json({ message: 'Nothing updated' });
+        }
+
+        return res.status(400).json({ error: 'Could not find account' });
+    } catch {
+        return res.status(500).json({ error: 'Could not modify account.' });
+    }
+};
+
+const getAccount = async (req: Request, res: Response) => {
+    try {
+        const query = { _id: req.session.account?._id };
+        const docs = await Account.findOne(query).exec();
+
+        if (docs) {
+            const account = {
+                username: docs?.username,
+                password: docs?.password,
+                acceptedChatId: docs?.acceptedChatId,
+                acceptedTou: docs?.acceptedTOU,
+                chatId: docs?.chatId,
+            };
+            return res.status(200).json(account);
+        }
+        return res.status(500).json({ error: 'Could not retrieve account' });
+    } catch {
+        return res.status(500).json({ error: 'Could not retrieve account' });
+    }
+};
+
 export {
     login,
     signup,
@@ -99,4 +204,6 @@ export {
     logout,
     getPersonalChatId,
     checkUserChatId,
+    modifyAccount,
+    getAccount,
 };

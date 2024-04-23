@@ -1,8 +1,11 @@
 import bcrypt from 'bcrypt';
 import { Response } from 'express';
 import mongoose, { ObjectId } from 'mongoose';
-import { ObjectId as CreateObjectId } from 'mongodb';
+import ShortUniqueId from 'short-unique-id';
 
+// mongodb ObjectID() does not work since its
+// pseudo-random is unreliable on Heroku
+const uid = new ShortUniqueId({ length: 16 });
 const saltRounds = 10;
 
 interface IRedisAccount {
@@ -14,8 +17,10 @@ interface IAccount {
     username: string,
     password: string,
     createdDate: Date,
-    _chatId: ObjectId,
-    _id: ObjectId
+    acceptedTOU: boolean,
+    acceptedChatId: boolean,
+    chatId: string,
+    _id: ObjectId,
 }
 
 interface IAccountMethods {
@@ -27,7 +32,7 @@ interface IAccountModel extends mongoose.Model<IAccount, object, IAccountMethods
         username: string,
         pass: string,
         callback: (err?: Error, account?: IAccount) => Response
-    ): any,
+    ): Promise<Response>,
     toAPI(account: IAccount): IRedisAccount,
     generateHash(password: string): Promise<string>,
 }
@@ -48,9 +53,17 @@ const AccountSchema = new mongoose.Schema<IAccount, IAccountModel, IAccountMetho
         type: Date,
         default: Date.now,
     },
-    _chatId: {
-        type: mongoose.Types.ObjectId,
-        default: new CreateObjectId(CreateObjectId.generate(Date.now())),
+    chatId: {
+        type: String,
+        default: `User${uid.rnd()}`,
+    },
+    acceptedTOU: {
+        type: Boolean,
+        default: false,
+    },
+    acceptedChatId: {
+        type: Boolean,
+        default: false,
     },
 });
 

@@ -16,8 +16,11 @@ const router = (app: express.Express) => {
     // main app
     app.get('/app', mid.requiresSecure, mid.requiresLogin, App.default);
 
-    app.get('/personalChatId', mid.requiresSecure, Account.getPersonalChatId);
-    app.get('/checkUserChatId', mid.requiresSecure, Account.checkUserChatId);
+    app.get('/personalChatId', mid.requiresSecure, mid.requiresLogin, Account.getPersonalChatId);
+    app.get('/checkUserChatId', mid.requiresSecure, mid.requiresLogin, Account.checkUserChatId);
+
+    app.post('/account', mid.requiresSecure, mid.requiresLogin, Account.modifyAccount);
+    app.get('/account', mid.requiresSecure, mid.requiresLogin, Account.getAccount);
 
     app.get('/404', page404);
     app.get('/500', page500);
