@@ -1,7 +1,7 @@
 import express from 'express';
 import * as mid from './middleware';
 import {
-    Account, App, page404, page500,
+    Account, Message, ChatRoom, App, page404, page500,
 } from './controllers';
 
 const router = (app: express.Express) => {
@@ -21,6 +21,10 @@ const router = (app: express.Express) => {
 
     app.post('/account', mid.requiresSecure, mid.requiresLogin, Account.modifyAccount);
     app.get('/account', mid.requiresSecure, mid.requiresLogin, Account.getAccount);
+
+    app.post('/createMessage', mid.requiresSecure, mid.requiresLogin, Message.createMessage);
+    app.get('/getMessages', mid.requiresSecure, mid.requiresLogin, Message.getMessages);
+    app.post('/createAndGetRoom', mid.requiresSecure, mid.requiresLogin, ChatRoom.createAndGetRoom);
 
     app.get('/404', page404);
     app.get('/500', page500);

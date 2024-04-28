@@ -14,6 +14,8 @@ const page500 = (req: Request, res: Response) => {
 
 export * as Account from './Account';
 export * as App from './App';
+export * as Message from './Message';
+export * as ChatRoom from './ChatRoom';
 
 export {
     page404,

@@ -10,7 +10,7 @@
     "build": "npm run bundle-front & npm run bundle-back",
     "bundle-front": "webpack --config ./webpack-front.config.js",
     "bundle-back": "webpack --config ./webpack-back.config.js",
-    "nodemon": "nodemon ./server/app.bundle.js"
+    "nodemon": "nodemon -e css --watch ./hosted --watch ./views ./server/app.bundle.js"
   },
   "repository": {
     "type": "git",

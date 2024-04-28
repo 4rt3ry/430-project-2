@@ -1,8 +1,7 @@
 import { Request, Response } from 'express';
 import { mongo } from 'mongoose';
 import PasswordValidator from 'password-validator';
-import Account from '../models';
-import { IAccount } from '../models/Account';
+import Account, { IAccount } from '../models/Account';
 
 const loginPage = (req: Request, res: Response) => res.render('login');
 
@@ -67,7 +66,7 @@ const getPersonalChatId = async (req: Request, res: Response) => {
     try {
         const query = { _id: req.session.account?._id };
         const docs = await Account.findOne(query).exec();
-        return res.json({ chatId: docs?.chatId });
+        return res.json({ chatId: docs?.chatId, staticChatId: docs?.staticChatId });
     } catch {
         return res.status(500).json({ error: 'Could not retrieve chat id' });
     }
@@ -146,9 +145,9 @@ const modifyAccount = async (req: Request, res: Response) => {
                 if (await Account.findOne(chatIdQuery).exec()) {
                     return res.status(400).json({ error: 'Chat ID already exists' });
                 }
-                if (validator.validate(req.body.chatId)) {
-                    modifications.chatId = req.body.chatId;
-                } else return res.status(400).json({ error: 'Invalid chat id' });
+
+                // chatId does not need to be validated
+                modifications.chatId = req.body.chatId;
             }
 
             // FOR PASSWORD CHANGES, MAKE SURE TO SAVE THE HASH
@@ -159,14 +158,14 @@ const modifyAccount = async (req: Request, res: Response) => {
 
             // finally make the modifications
             if (Object.keys(modifications).length > 0) {
-            const updatedDoc = await Account.updateOne(
-                query,
-                {
-                    $set: modifications,
-                },
-            );
-            if (updatedDoc) return res.status(200).json({ message: 'Successful update' });
-        }
+                const updatedDoc = await Account.updateOne(
+                    query,
+                    {
+                        $set: modifications,
+                    },
+                );
+                if (updatedDoc) return res.status(200).json({ message: 'Successful update' });
+            }
             return res.status(204).json({ message: 'Nothing updated' });
         }
 

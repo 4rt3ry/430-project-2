@@ -93,8 +93,8 @@ const SignupWindow = (props) => {
 }
 
 const init = () => {
-    const loginButton = document.querySelector("#loginButton");
-    const signupButton = document.querySelector("#signupButton");
+    const loginButton = document.querySelector("#login-btn");
+    const signupButton = document.querySelector("#signup-btn");
 
     const root = createRoot(document.querySelector("#content"));
 

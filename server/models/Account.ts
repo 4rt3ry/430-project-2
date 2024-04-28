@@ -20,6 +20,8 @@ interface IAccount {
     acceptedTOU: boolean,
     acceptedChatId: boolean,
     chatId: string,
+    staticChatId: string,
+    rooms: {name: string, id: string}[],
     _id: ObjectId,
 }
 
@@ -57,6 +59,10 @@ const AccountSchema = new mongoose.Schema<IAccount, IAccountModel, IAccountMetho
         type: String,
         default: `User${uid.rnd()}`,
     },
+    staticChatId: {
+        type: String,
+        default: `User${uid.rnd()}`,
+    },
     acceptedTOU: {
         type: Boolean,
         default: false,
@@ -64,6 +70,10 @@ const AccountSchema = new mongoose.Schema<IAccount, IAccountModel, IAccountMetho
     acceptedChatId: {
         type: Boolean,
         default: false,
+    },
+    rooms: {
+        type: [{ name: String, id: String }],
+        default: [],
     },
 });
 

@@ -2,35 +2,43 @@ import { Application } from 'express';
 import http from 'http';
 import { Server, Socket } from 'socket.io';
 import sanitizeHTML from 'sanitize-html';
+import { IMessage } from './models/Message';
 
 let io: Server;
 
-const handleMessage = (socket: Socket, msg: string) => {
+const handleMessage = (socket: Socket, msg: IMessage) => {
     socket.rooms.forEach((room: string) => {
         // don't send a message to itself
         if (room === socket.id) return;
 
-        io.to(room).emit('chat message', sanitizeHTML(msg, {
-            allowedTags: [],
-            allowedAttributes: {},
-            disallowedTagsMode: 'escape',
-        }));
+        const newMessage = {
+            author: msg.author,
+            authorId: msg.authorId,
+            message: sanitizeHTML(msg.message, {
+                allowedTags: [],
+                allowedAttributes: {},
+                disallowedTagsMode: 'escape',
+            }),
+            roomId: msg.roomId,
+            createdDate: msg.createdDate
+        }
+
+        io.to(room).emit('chat message', newMessage);
     });
 };
 
-const handleRoomChange = (socket: Socket, roomId: string) => {
-    socket.rooms.forEach((room: string) => {
-        if (room === socket.id) {
+const handleRoomChange = (socket: Socket, room: {id: string, name: string}) => {
+    socket.rooms.forEach((r: string) => {
+        if (r === socket.id) {
             // tell the user they successfully changed rooms
             // this allows the user to hook events on successful
             // room change
-            io.to(room).emit('room change', roomId);
+            io.to(r).emit('room change', room);
             return;
         }
-        socket.leave(room);
+        socket.leave(r);
     });
-    socket.join(roomId);
-    console.log(roomId);
+    socket.join(room.id);
 };
 
 const setupServer = (app: Application): http.Server => {

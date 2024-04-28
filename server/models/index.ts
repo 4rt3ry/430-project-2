@@ -1,3 +1,7 @@
-import model from './Account';
+import AccountModel from './Account';
+import MessageModel from './Message'
 
-export default model;
+export {
+    AccountModel,
+    MessageModel
+}
