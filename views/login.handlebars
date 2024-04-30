@@ -1,25 +1,26 @@
-<html lang="en">
+<html lang='en'>
+
 <head>
-  <meta charset="utf-8"/>
+  <meta charset='utf-8' />
   <title>Open BM</title>
-  <link rel="shortcut icon" href="/assets/img/favicon.png"/>
-  {{!-- <link rel="stylesheet" type="text/css" href="/assets/style.css"/> --}}
+  <link rel='shortcut icon' href='/assets/img/favicon.png' />
+  <link rel='stylesheet' type='text/css' href='/assets/styles/default.css' />
+  <link rel='stylesheet' type='text/css' href='/assets/styles/login.css' />
 </head>
-<body> 
+
+<body>
   <nav>
-    {{!-- <a href="/login"><img id="logo" src="/assets/img/face.png" alt="face logo"/></a> --}}
-    <div class="navlink"><a id="login-btn" href="/login">Login</a></div>
-    <div class="navlink"><a id="signup-btn" href="/signup">Sign up</a></div>
+    {{!-- <a href='/login'><img id='logo' src='/assets/img/face.png' alt='face logo' /></a> --}}
+    <div class='navlink' id='home'><a href='/app'>Open BM</a></div>
+    <div class='navlink'><a id='login-btn' href='/login'>Login</a></div>
+    <div class='navlink'><a id='signup-btn' href='/signup'>Sign up</a></div>
   </nav>
-  
-  <section id="content">
+
+  <section id='content'>
 
   </section>
 
-  <div id="login-errors" class="hidden">
-    <p><span class="error-message"></span></p>
-  </div>
-  
-  <script src="/assets/login.bundle.js"></script>
+  <script src='/assets/login.bundle.js'></script>
 </body>
+
 </html>

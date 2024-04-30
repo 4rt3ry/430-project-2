@@ -14,17 +14,21 @@ const router = (app: express.Express) => {
     app.get('/logout', mid.requiresLogin, Account.logout);
 
     // main app
-    app.get('/app', mid.requiresSecure, mid.requiresLogin, App.default);
+    app.get('/app', mid.requiresSecure, mid.requiresLogin, App.appPage);
 
     app.get('/personalChatId', mid.requiresSecure, mid.requiresLogin, Account.getPersonalChatId);
     app.get('/checkUserChatId', mid.requiresSecure, mid.requiresLogin, Account.checkUserChatId);
 
     app.post('/account', mid.requiresSecure, mid.requiresLogin, Account.modifyAccount);
+    app.post('/secureAccount', mid.requiresSecure, mid.requiresLogin, Account.modifyAccountSecure);
     app.get('/account', mid.requiresSecure, mid.requiresLogin, Account.getAccount);
+    app.get('/account/settings', mid.requiresSecure, mid.requiresLogin, Account.accountPage);
 
     app.post('/createMessage', mid.requiresSecure, mid.requiresLogin, Message.createMessage);
     app.get('/getMessages', mid.requiresSecure, mid.requiresLogin, Message.getMessages);
     app.post('/createAndGetRoom', mid.requiresSecure, mid.requiresLogin, ChatRoom.createAndGetRoom);
+
+    app.get('/about', App.aboutPage);
 
     app.get('/404', page404);
     app.get('/500', page500);

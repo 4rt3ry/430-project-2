@@ -1,0 +1,10 @@
+a {
+    color: white;
+    color: var(--primary-light);
+}
+
+a:visited {
+    color: white;
+    color: var(--primary-dark);
+}
+

@@ -1,6 +1,26 @@
 {
     "responses": {
-        
+        "messages": [
+            "I hear ya",
+            "Happened to a friend of mine",
+            "In this economy",
+            "As the prophecy foretold",
+            "and?",
+            "Word",
+            "That's just what he would've said",
+            "I'm not really in the mood to talk right now",
+            "It happens sometimes",
+            "Cool story bro",
+            "mhmm",
+            "But at what cost?",
+            "So let it be written; so let it be done",
+            "So... it has come to this",
+            "And thus, I die",
+            "Is this why fate brought us together?",
+            "Be that as it may, still may it be as it be",
+            "wise words",
+            "There is no escape from destiny"
+        ]
     },
     "errors": {
         "insufficient_quota": {

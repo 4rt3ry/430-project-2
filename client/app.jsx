@@ -2,7 +2,6 @@ import { sendGet, sendPost } from './helper'
 import React from 'react'
 import { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client'
-import { AccountSettings } from './account';
 
 const socket = io();
 
@@ -52,7 +51,7 @@ const Messages = (props) => {
                 </div>
             </div>
         )
-    } 
+    }
 
     return (<>
         {/* <div id='messages-title'>
@@ -156,7 +155,7 @@ const Rooms = (props) => {
     return (
         <div id='rooms'>
             <h1>Rooms</h1>
-            <ul class='room-list'>{roomNodes}</ul>
+            <ul class='category-list'>{roomNodes}</ul>
             <Invite reloadRoom={props.reloadRoom}></Invite>
         </div>
     )
@@ -181,12 +180,12 @@ const AccountInfo = (props) => {
                 <p id='personal-chat-id' onClick={copyId}>{props.chatId}</p>
                 <span class='tooltip-text-above'>Copy User ID</span>
             </div>
-            <input 
-            id='settings-btn' 
-            class='icon' 
-            type='image' 
-            src='/assets/img/settings.png'
-            ></input>
+            <a
+                id='settings-btn'
+                href='/account/settings'
+            >
+                <img class='icon' src='/assets/img/settings.png'></img>
+            </a>
         </div>
     )
 }
@@ -209,6 +208,10 @@ const MessageForm = (props) => {
      */
     const sendMessage = async (e) => {
         e.preventDefault();
+
+        if (e.which == 13 && e.shiftKey) {
+            return false;
+        }
 
         const messageBox = e.target.querySelector('#message-input');
 
@@ -282,11 +285,17 @@ const ChatIdPopup = (props) => {
         // if user inputed a new id, send it to the server
         // TODO: validate new id (it's already done in server)
         // perhaps create an error popup if unsucessful
-        const oldChatId = personalChatId;
         const chatId = document.querySelector('#chat-id-input').value;
         const send = { acceptedChatId: true };
         if (chatId) send.chatId = chatId;
-        await sendPost('/account', send);
+        const result = await sendPost('/account', send);
+
+        // show any errors to user
+        if (result.error) {
+            document.querySelector("#errors>.error-message").innerHTML = result.error;
+            return;
+        }
+
         props.setChatId(chatId);
         await reloadChatId();
     }
@@ -303,6 +312,9 @@ const ChatIdPopup = (props) => {
                     placeholder={props.account.chatId}
                     class='light-theme'
                 ></input>
+                <div id='errors' class='hidden'>
+                    <p><span class='error-message'></span></p>
+                </div>
             </div>
             <button onClick={close}>Accept</button>
         </div>
@@ -310,9 +322,6 @@ const ChatIdPopup = (props) => {
 }
 
 const PopupWindow = (props) => {
-
-    // Figure out a way to allow users to create their own id within a popup
-    // If a user already has an id, don't show that popup
 
     const [popups, setPopups] = useState(props.queue);
     const root = document.querySelector('#popup'); // surely there's a better way to do this
@@ -350,8 +359,6 @@ const AppWindow = (props) => {
     const addMessage = (newMsg) => {
         setMessages(m => [...m, newMsg])
     }
-
-    console.log(messages);
 
     // Hook 'room change' event only once when the app
     // is created

@@ -1,0 +1,56 @@
+
+html {
+    font-size: 16px;
+    background-color: var(--bgcolor-dark);
+}
+
+body {
+    /* background-color: var(--bgcolor-light); */
+    margin: 0;
+    color: var(--color);
+    font-family: "Noto Sans", sans-serif;
+}
+
+div {
+    margin: 0;
+}
+
+p {
+    margin: 0px;
+}
+
+h1 {
+    text-align: center;
+}
+
+nav #login-btn {
+    margin-left: auto;
+}
+
+label {
+    font-size: 1rem;
+    margin: 5px;
+}
+
+#content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: calc(100% - var(--nav-height));
+    margin: 0;
+    padding: 0;
+}
+
+.content-area {
+    width: 400px;
+    height: 300px;
+    maxWidth: 80%;
+    maxHeight: 80%;
+    background-color: var(--bgcolor-light);
+    border-radius: 10px;
+    padding: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}

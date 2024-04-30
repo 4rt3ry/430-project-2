@@ -42,8 +42,9 @@ const createAndGetRoom = async (req: Request, res: Response) => {
         messages
     };
 
-    // temporarily return i'm a teapot
-    return res.status(418).json(result);
+    // I can't believe professor is teaching everyone's favorite class.
+
+    return res.status(200).json(result);
 };
 
 // tmp to get rid of eslint error

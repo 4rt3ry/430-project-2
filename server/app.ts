@@ -1,7 +1,5 @@
-// import { APIError } from 'openai/error';
 import path from 'path';
-// import OpenAI from 'openai';
-// import { APIError, OpenAIError } from 'openai/error';
+
 import express from 'express';
 import compression from 'compression';
 import favicon from 'serve-favicon';
@@ -38,10 +36,7 @@ const redisClient = redis.createClient({
 
 redisClient.on('error', (err) => console.log('Redis Client Error', err));
 
-// setup openai
-// const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-// const defaultResponses = readJSON('../data/default-responses.json');
-// const disableAI = true;
+
 
 // connect to redis, start app
 redisClient.connect().then(() => {
@@ -77,20 +72,3 @@ redisClient.connect().then(() => {
         console.log(`Listening on port ${port}`);
     });
 });
-
-// const main = async () => {
-//     try {
-//         if (disableAI) throw new APIError(400, undefined, 'AI is disabled', undefined);
-//         const completion = await openai.chat.completions.create({
-//             messages: [{ role: 'system', content: 'You are a helpful assistant.' }],
-//             model: 'gpt-3.5-turbo',
-//         });
-//         console.log(completion.choices[0]);
-//     } catch (err) {
-//         const e = err as APIError;
-//         console.log(e.toString());
-//         console.log(randomString(defaultResponses.errors[e.code || 'default'].messages));
-//     }
-// };
-
-// main();

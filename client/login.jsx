@@ -55,31 +55,36 @@ const handleSignup = (e) => {
 }
 
 const LoginWindow = (props) => {
-    return (
-        <form id='loginForm'
+    return (<div className='content-area'>
+        <h1>Sign In</h1>
+        <form id='login-form'
             name='loginForm'
             onSubmit={handleLogin}
             action='/login'
             method='POST'
-            className='mainForm'
+            className='main-form'
         >
             <label htmlFor='username'>Username: </label>
             <input id='user' type='text' name='username' placeholder='username' />
             <label htmlFor='pass'>Password: </label>
             <input id='pass' type='password' name='pass' placeholder='password' />
-            <input className='formSubmit' type='submit' value='Sign In' />
+            <input className='form-submit' type='submit' value='Sign In' />
         </form>
-    );
+        <div id='login-errors' class='hidden'>
+            <p><span class='error-message'></span></p>
+        </div>
+    </div>);
 }
 
 const SignupWindow = (props) => {
-    return (
-        <form id='signupForm'
+    return (<div className='content-area'>
+        <h1>Sign In</h1>
+        <form id='signup-form'
             name='signupForm'
             onSubmit={handleSignup}
             action='/signup'
             method='POST'
-            className='mainForm'
+            className='main-form'
         >
             <label htmlFor='username'>Username: </label>
             <input id='user' type='text' name='username' placeholder='username' />
@@ -87,9 +92,12 @@ const SignupWindow = (props) => {
             <input id='pass' type='password' name='pass' placeholder='password' />
             <label htmlFor='pass2'>Password: </label>
             <input id='pass2' type='password' name='pass2' placeholder='retype password' />
-            <input className='formSubmit' type='submit' value='Sign Up' />
+            <input className='form-submit' type='submit' value='Sign Up' />
         </form>
-    );
+        <div id='login-errors' class='hidden'>
+            <p><span class='error-message'></span></p>
+        </div>
+    </div>);
 }
 
 const init = () => {
@@ -106,11 +114,11 @@ const init = () => {
 
     signupButton.addEventListener('click', (e) => {
         e.preventDefault();
-        root.render(<SignupWindow/>);
+        root.render(<SignupWindow />);
         return false;
     });
 
-    root.render(<LoginWindow/>);
+    root.render(<LoginWindow />);
 };
 
 window.onload = init;

@@ -33,31 +33,6 @@ p {
     margin: 0px;
 }
 
-input[type='text'] {
-    padding: 10px 10px;
-    width: 100%;
-    margin-top: auto;
-    background-color: var(--bgcolor-neutral);
-    color: white;
-    border: none;
-    border-color: white;
-    border-radius: 5px;
-    font-size: 1rem;
-    /* outline: none; */
-}
-
-input[type='text']:focus {
-    outline: solid white 1px;
-}
-
-input[type='text'].light-theme {
-    background-color: var(--color-dark);
-    color: var(--bgcolor-neutral);
-}
-
-input[type='text']:focus.light-theme {
-    outline: solid var(--bgcolor-neutral) 1px;
-}
 
 .icon {
     width: 1.5rem;
@@ -65,55 +40,14 @@ input[type='text']:focus.light-theme {
     padding: 5px;
 }
 
+img.icon {
+    padding: 0px;
+}
+
 hr {
     width: 90%;
     border-width: 1px;
 }
-/* change to bg-dark to match variable names */
-.bg-light {
-    background-color: var(--bgcolor-light);
-    color: var(--bgcolor-light);
-    border-color: var(--bgcolor-light);
-}
-
-.ghost {
-    color: var(--color);
-    filter:opacity(0.25);
-    user-select: none;
-}
-
-.center {
-    height: 100%;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-/**********************      nav bar      *******************/
-nav {
-    background-color: var(--bgcolor-dark);
-    height: var(--nav-height);
-    display: flex;
-    color: var(--color);
-    justify-content: flex-end;
-
-    font-size: 1.2rem;
-}
-
-.navlink {
-    position: relative;
-    padding: 0px 10px;
-    display: flex;
-    align-items: center;
-    flex-direction: row;
-}
-
-.navlink a {
-    color: var(--color);
-    display: inline-block;
-}
-
 
 /**********************     main app       ******************/
 
@@ -122,41 +56,6 @@ nav {
     justify-content: space-between;
     width: 100%;
     height: calc(100% - var(--nav-height));
-}
-
-#side-bar {
-    min-width: var(--sidebar-width);
-    height: 100%;
-    background-color: var(--bgcolor-dark);
-    display: flex;
-    flex-direction: column;
-    /* border-top-right-radius: 10px; */
-    /* border-bottom-right-radius: 10px; */
-}
-
-#side-bar ul {
-    padding: 5px;
-}
-
-#side-bar li {
-    list-style-type: none;
-    padding: 8px 10px;
-}
-
-#side-bar li:hover {
-    background-color: var(--primary-dark-trans);
-    border-radius: 10px;
-    cursor: pointer;
-}
-
-#side-bar li.selected:hover {
-    background-color: var(--primary-light);
-}
-
-#side-bar li.selected {
-    list-style-type: none;
-    background-color: var(--primary-dark);
-    border-radius: 10px;
 }
 
 /***********         inside the side bar           ***********/
@@ -314,9 +213,9 @@ plus-icon {
 
 /******************* main content ******************/
 #current-room {
-    /* border-top-left-radius: 10px; */
-    /* border-bottom-left-radius: 10px; */
-    border-radius: 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    /* border-radius: 10px; */
     border-color: transparent;
     background-color: var(--bgcolor-light);
     padding: 10px;
