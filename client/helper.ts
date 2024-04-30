@@ -3,18 +3,19 @@ type ResponseHandler = ((responseBody: object) => void) | undefined;
 
 const handleError = (message: string): void => {
     const errorContainer = document.querySelector("#login-errors") as HTMLElement;
+    if (!errorContainer) return;
     const errorTag = errorContainer.querySelector(".error-message") as HTMLElement;
-    if (errorContainer)
-        errorContainer.classList.remove("hidden");
+
+    errorContainer.classList.remove("hidden");
     if (errorTag)
         errorTag.innerText = message;
 }
 
 const clearError = () => {
     const errorContainer = document.querySelector("#login-errors") as HTMLElement;
+    if (!errorContainer) return;
     const errorTag = errorContainer.querySelector(".error-message") as HTMLElement;
-    if (errorContainer)
-        errorContainer.classList.add("hidden");
+    errorContainer.classList.add('hidden');
     if (errorTag)
         errorTag.innerText = "";
 }

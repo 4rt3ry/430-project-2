@@ -30,6 +30,7 @@ const router = (app: express.Express) => {
 
     app.post('/createAndGetRoom', mid.requiresSecure, mid.requiresLogin, ChatRoom.createAndGetRoom);
     app.get('/getRooms', mid.requiresSecure, mid.requiresLogin, ChatRoom.getRooms);
+    app.post('/changeRoomName', mid.requiresSecure, mid.requiresLogin, ChatRoom.changeRoomName);
 
     app.get('/about', App.aboutPage);
 

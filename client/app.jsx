@@ -134,6 +134,64 @@ const Invite = (props) => {
     )
 }
 
+const Room = (props) => {
+    const [changingName, setChangingName] = useState(false);
+
+    const changeRoomName = (roomId) => async (e) => {
+        const roomName = e.currentTarget.querySelector("input");
+
+        if (roomName) {
+            if (roomName.value.trim().length > 0) {
+                props.changeRoomName(roomName.value.trim(), roomId);
+            }
+        }
+        setChangingName(false);
+    }
+
+    const closeForm = (e) => {
+        if (e.key === "Escape") setChangingName(false);
+    }
+
+    if (changingName) {
+        return (
+            <li
+            data-room-id={props.room.id}
+            className={
+                (props.room.id === props.currentRoom.id ?
+                 'selected' :
+                  '') + ' room-node'}
+        >
+            <form
+            onSubmit={changeRoomName(props.room.id)}
+            onBlur={() => setChangingName(false)}
+            onKeyDown={closeForm}
+            >
+                <input 
+                type='text'
+                placeholder={props.room.name}
+                ></input>
+            </form>
+            <span class='remove'></span>
+        </li>
+        )
+    }
+
+    return (
+        <li
+            data-room-id={props.room.id}
+            onClick={props.selectRoom}
+            onDoubleClick={() => setChangingName(true)}
+            className={
+                (props.room.id === props.currentRoom.id ?
+                 'selected' :
+                  '') + ' room-node'}
+        >
+            <p>{props.room.name}</p>
+            <span class='remove'></span>
+        </li>
+    );
+}
+
 const Rooms = (props) => {
 
     const [rooms, setRooms] = useState([]);
@@ -172,19 +230,23 @@ const Rooms = (props) => {
         });
     }
 
+    const changeRoomName = async (newRoomName, roomId) => {
+        const newRoom = {
+            id: roomId,
+            name: newRoomName
+        }
+        await sendPost('/changeRoomName', {room: newRoom});
+        await fetchRooms();
+    }
+
     const roomNodes = rooms.map((room, i) => {
         return (
-            <li
-                data-room-id={room.id}
-                onClick={selectRoom}
-                className={
-                    (room.id === props.room.id ?
-                     'selected' :
-                      '') + ' room-node'}
-            >
-                <p>{room.name}</p>
-                <span class='remove'></span>
-            </li>
+            <Room 
+            room={room} 
+            currentRoom={props.room} 
+            selectRoom={selectRoom}
+            changeRoomName={changeRoomName}
+            ></Room>
         )
     });
 
@@ -408,6 +470,8 @@ const AppWindow = (props) => {
 
         socket.on('chat message', addMessage)
 
+        // Create Popup Window
+
         // load messages from server when initializing app
 
         // TODO: actually create GET '/createAndGetMessages?chatId=1234' on server
@@ -425,8 +489,6 @@ const AppWindow = (props) => {
         }
 
         reloadRoom(roomRequest);
-
-        // Create Popup Window
 
         // retrieve account information before continuing
         const accountRequest = sendGet('/account');

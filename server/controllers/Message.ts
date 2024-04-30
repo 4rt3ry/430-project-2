@@ -44,7 +44,7 @@ const getMessages = async (req: Request, res: Response) => {
     const query = { roomId: `${req.query.roomId}`.trim() };
 
     try {
-        const docs = await MessageModel.find(query, { _id: 0 });
+        const docs = await MessageModel.find(query, { _id: 0 }).exec();
 
         return res.status(200).json(docs);
     } catch {

@@ -18,7 +18,6 @@ const getAIResponse = async (msg: string) => {
 
         const descriptors = [
             'chaotic',
-            'naughty',
             'truthful',
             'silly',
             'serious',

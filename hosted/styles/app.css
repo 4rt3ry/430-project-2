@@ -67,6 +67,10 @@ hr {
     justify-content: space-between;
 }
 
+.room-node {
+    user-select: none;
+}
+
 #rooms h1 {
     margin: 0px 10px;
 }

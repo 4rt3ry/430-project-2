@@ -56,9 +56,6 @@ const signup = async (req: Request, res: Response) => {
         return res.status(400).json({ error: 'Passwords must match' });
     }
 
-    if (!validator.validate(username)) {
-        return res.status(400).json({ error: 'Username must be between 6 and 30 characters and have no spaces.' });
-    }
     if (!validator.validate(pass)) {
         return res.status(400).json({ error: 'Password must be between 6 and 30 characters and have no spaces.' });
     }
@@ -124,7 +121,7 @@ const purchasePremium = async (req: Request, res: Response) => {
             {
                 $set: { premium: true },
             },
-        );
+        ).exec();
         if (updatedDoc) return res.status(200).json({ message: 'Successfully purchased premium' });
         return res.status(500).json({ error: 'Something went wrong' });
     } catch {
@@ -179,7 +176,7 @@ const modifyAccount = async (req: Request, res: Response) => {
                     {
                         $set: modifications,
                     },
-                );
+                ).exec();
                 if (updatedDoc) return res.status(200).json({ message: 'Successful update' });
             }
             return res.status(204).json({ message: 'Nothing updated' });
@@ -229,9 +226,7 @@ const modifyAccountSecure = async (req: Request, res: Response) => {
                 if (await Account.findOne(unameQuery).exec()) {
                     return res.status(400).json({ error: 'Username already exists' });
                 }
-                if (validator.validate(newUsername)) {
-                    modifications.username = newUsername;
-                } else return res.status(400).json({ error: 'Username must 6-30 characters in length with no spaces' });
+                modifications.username = newUsername;
             }
 
             // If user creates a new password, make sure to store the hash
@@ -250,7 +245,7 @@ const modifyAccountSecure = async (req: Request, res: Response) => {
                     {
                         $set: modifications,
                     },
-                );
+                ).exec();
                 if (updatedDoc) return res.status(200).json({ message: 'Successful update' });
             }
             return res.status(204).json({ message: 'Nothing updated' });
