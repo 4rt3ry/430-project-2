@@ -135,7 +135,7 @@ const ChatIdForm = (props) => {
         <div
             class='content'
         >
-            <h1>Change Username</h1>
+            <h1>Change Chat ID</h1>
             <form id='change-username-form'
                 name='change-username-form'
                 onSubmit={changeChatId}
@@ -182,7 +182,7 @@ const PasswordForm = (props) => {
         <div
             class='content'
         >
-            <h1>Change Username</h1>
+            <h1>Change Password</h1>
             <form id='change-password-form'
                 name='change-password-form'
                 onSubmit={changePassword}
