@@ -54,6 +54,14 @@
     background-color: var(--bgcolor-light);
 }
 
+.account-row-info {
+    padding: 10px 0px;
+}
+
+.account-row-info h3 {
+    margin: 10px 0px;
+}
+
 .account-row-edit {
     width: 40px;
 }

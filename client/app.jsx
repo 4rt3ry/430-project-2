@@ -257,7 +257,7 @@ const MessageForm = (props) => {
             author: props.chatId,
             authorId: personalStaticChatId,
             message: messageBox.value,
-            roomId: currentRoom.id
+            roomId: props.room.id
         };
 
         const serverMessage = await sendPost('/createMessage', newMessage);
@@ -451,7 +451,7 @@ const AppWindow = (props) => {
         <SideBar room={room} chatId={chatId} reloadRoom={reloadRoom} reloadedRoom={reloadedRoom}></SideBar>
         <div id='current-room'>
             <Messages room={room} messages={messages}></Messages>
-            <MessageForm chatId={chatId}></MessageForm>
+            <MessageForm chatId={chatId} room={room}></MessageForm>
         </div>
     </>
     )
