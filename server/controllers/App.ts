@@ -6,5 +6,5 @@ const aboutPage = (req: Request, res: Response) => res.render('about');
 
 export {
     appPage,
-    aboutPage
-}
+    aboutPage,
+};

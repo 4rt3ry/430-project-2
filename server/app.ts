@@ -19,8 +19,6 @@ dotenv.config();
 // setup server
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
-console.log(process.env.NODE_ENV ?? 'PROBABLY DEBUG');
-
 // setup databases
 const dbURI = process.env.MONGODB_URI || 'mongodb://127.0.0.1/openbm';
 mongoose.connect(dbURI).catch((err: MongooseError) => {
@@ -35,8 +33,6 @@ const redisClient = redis.createClient({
 });
 
 redisClient.on('error', (err) => console.log('Redis Client Error', err));
-
-
 
 // connect to redis, start app
 redisClient.connect().then(() => {

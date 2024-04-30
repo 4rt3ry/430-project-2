@@ -30,8 +30,10 @@ const Messages = (props) => {
 
     useEffect(() => {
         const messages = document.querySelectorAll(".message-content");
-        const lastMessage = messages[messages.length - 1];
-        lastMessage.scrollIntoView();
+        if (messages) {
+            const lastMessage = messages[messages.length - 1];
+            lastMessage?.scrollIntoView();
+        }
     }, [props.messages]);
 
     const messages = props.messages.map(m => (

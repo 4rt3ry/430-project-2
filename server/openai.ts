@@ -1,8 +1,8 @@
-
 import OpenAI from 'openai';
 import { APIError } from 'openai/error';
+import dotenv from 'dotenv';
 import { readJSON, randomString } from './helpers';
-import dotenv from 'dotenv'
+
 dotenv.config();
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -10,7 +10,6 @@ const defaultResponses = readJSON('../data/default-responses.json');
 const disableAI = false;
 
 const getAIResponse = async (msg: string) => {
-
     let newMessage = randomString(defaultResponses.responses.messages);
 
     try {
@@ -25,7 +24,7 @@ const getAIResponse = async (msg: string) => {
             'serious',
             'sinister',
         ];
-        const prompt = `Replace the phrase ${msg} with a ${randomString(descriptors)} response. You can choose whether or not to change the original intent entirely. Respond as if you are a human giving concise answers.`;
+        const prompt = `Someone sent the message "${msg}". Replace their message with a ${randomString(descriptors)} phrase.`;
 
         const completion = await openai.chat.completions.create({
             messages: [{ role: 'system', content: prompt }],

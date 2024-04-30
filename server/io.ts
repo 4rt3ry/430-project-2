@@ -3,12 +3,10 @@ import http from 'http';
 import { Server, Socket } from 'socket.io';
 import sanitizeHTML from 'sanitize-html';
 import { IMessage } from './models/Message';
-import GenerateAIText from './openai'
-
+import GenerateAIText from './openai';
 
 let io: Server;
 
-const aiProbability = 0.25;
 
 const handleMessage = (socket: Socket, msg: IMessage) => {
     socket.rooms.forEach(async (room: string) => {
@@ -21,23 +19,20 @@ const handleMessage = (socket: Socket, msg: IMessage) => {
             disallowedTagsMode: 'escape',
         });
 
-        if (Math.random() < aiProbability) {
-            message = await GenerateAIText(message);
-        }
 
         const newMessage = {
             author: msg.author,
             authorId: msg.authorId,
             message,
             roomId: msg.roomId,
-            createdDate: msg.createdDate
-        }
+            createdDate: msg.createdDate,
+        };
 
         io.to(room).emit('chat message', newMessage);
     });
 };
 
-const handleRoomChange = (socket: Socket, room: {id: string, name: string}) => {
+const handleRoomChange = (socket: Socket, room: { id: string, name: string }) => {
     socket.rooms.forEach((r: string) => {
         if (r === socket.id) {
             // tell the user they successfully changed rooms

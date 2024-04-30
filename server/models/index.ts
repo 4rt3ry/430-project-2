@@ -1,7 +1,7 @@
 import AccountModel from './Account';
-import MessageModel from './Message'
+import MessageModel from './Message';
 
 export {
     AccountModel,
-    MessageModel
-}
+    MessageModel,
+};

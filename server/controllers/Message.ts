@@ -1,8 +1,11 @@
 import { Request, Response } from 'express';
 import { IMessage, MessageModel } from '../models/Message';
+import GenerateAIText from '../openai';
+
+const aiProbability = 0.25;
+
 
 const createMessage = async (req: Request, res: Response) => {
-
     const message = {
         author: `${req.body.author}`,
         authorId: `${req.body.authorId}`,
@@ -15,6 +18,11 @@ const createMessage = async (req: Request, res: Response) => {
         return res.status(400).json({ error: 'All fields are required' });
     }
     try {
+        if (Math.random() < aiProbability) {
+            message.message = await GenerateAIText(message.message);
+        }
+        
+
         const dbMessage = new MessageModel(message);
         await dbMessage.save();
 
@@ -23,8 +31,8 @@ const createMessage = async (req: Request, res: Response) => {
             authorId: dbMessage.authorId,
             message: dbMessage.message,
             roomId: dbMessage.roomId,
-            createdDate: dbMessage.createdDate
-        }
+            createdDate: dbMessage.createdDate,
+        };
 
         return res.status(201).json(msgResult);
     } catch {
@@ -37,7 +45,6 @@ const getMessages = async (req: Request, res: Response) => {
 
     try {
         const docs = await MessageModel.find(query, { _id: 0 });
-
 
         return res.status(200).json(docs);
     } catch {

@@ -74,7 +74,7 @@ const AccountSchema = new mongoose.Schema<IAccount, IAccountModel, IAccountMetho
     },
     premium: {
         type: Boolean,
-        default: false
+        default: false,
     },
     rooms: {
         type: [{ name: String, id: String }],

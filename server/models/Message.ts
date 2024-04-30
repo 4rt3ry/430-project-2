@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 interface IMessage {
     author: string,
-    authorId: String
+    authorId: string
     roomId: string,
     message: string,
     createdDate: Date,
