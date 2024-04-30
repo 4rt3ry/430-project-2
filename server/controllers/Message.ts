@@ -33,10 +33,12 @@ const createMessage = async (req: Request, res: Response) => {
 };
 
 const getMessages = async (req: Request, res: Response) => {
-    const query = { roomId: `${req.body.room?.id}` };
+    const query = { roomId: `${req.query.roomId}`.trim() };
 
     try {
-        const docs = await MessageModel.find(query).sort({ createdDate: -1 }).limit(100);
+        const docs = await MessageModel.find(query, { _id: 0 });
+
+
         return res.status(200).json(docs);
     } catch {
         return res.status(500).json({ error: 'Could not retrieve messages' });

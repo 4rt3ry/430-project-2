@@ -17,16 +17,6 @@ let currentRoom;
 
 ////////////// Replacement for connectUser() and createDMChannel()
 
-/**
- * This is meant to be the callback of a form
- * @param {*} e Form submit event
- */
-const joinRoom = (e) => {
-    e.preventDefault();
-
-
-
-}
 
 const Message = (props) => {
     return (<div className='message'>
@@ -37,6 +27,12 @@ const Message = (props) => {
 }
 
 const Messages = (props) => {
+
+    useEffect(() => {
+        const messages = document.querySelectorAll(".message-content");
+        const lastMessage = messages[messages.length - 1];
+        lastMessage.scrollIntoView();
+    }, [props.messages]);
 
     const messages = props.messages.map(m => (
         <Message {...m}></Message>
@@ -99,6 +95,7 @@ const Invite = (props) => {
 
             // reload all messages and room details
             props.reloadRoom(nextRoom);
+            props.fetchRooms();
 
             socket.emit('room change', nextRoom.room);
         }
@@ -137,15 +134,52 @@ const Invite = (props) => {
 
 const Rooms = (props) => {
 
-    const rooms = [
+    const [rooms, setRooms] = useState([]);
+    
+    const fetchRooms = async () => {
+        const newRooms = await sendGet('/getRooms');
+        setRooms(newRooms.rooms);
+    }
 
-        { name: 'johnny', id: 'test-id-1' },
-        { name: 'test', id: 'test-id-2' },
-    ]; // load user's rooms from the server
+    useEffect(() => {
+        sendGet('/getRooms', async (res) => {
+            setRooms(res.rooms);
+        });
+    }, props.reloadedRoom ?? []);
 
-    const roomNodes = rooms.map(room => {
+    const selectRoom = async (e) => {
+
+        const currentRoom = e.currentTarget;
+
+        // clear previously selected rooms
+        const roomList = document.querySelectorAll('#rooms .room-node');
+        if (roomList) {
+            roomList.forEach(r => {
+                r.classList.remove('selected');
+            });
+        }
+        const roomId = currentRoom.dataset.roomId;
+        const messagesResponse = await sendGet(`/getMessages?roomId=${roomId}`);
+
+        currentRoom.classList.add('selected');
+        props.reloadRoom({
+            room: {
+                id: roomId,
+            },
+            messages: messagesResponse
+        });
+    }
+
+    const roomNodes = rooms.map((room, i) => {
         return (
-            <li class='room-node' data-room-id={room.id}>
+            <li
+                data-room-id={room.id}
+                onClick={selectRoom}
+                className={
+                    (room.id === props.room.id ?
+                     'selected' :
+                      '') + ' room-node'}
+            >
                 <p>{room.name}</p>
                 <span class='remove'></span>
             </li>
@@ -156,7 +190,7 @@ const Rooms = (props) => {
         <div id='rooms'>
             <h1>Rooms</h1>
             <ul class='category-list'>{roomNodes}</ul>
-            <Invite reloadRoom={props.reloadRoom}></Invite>
+            <Invite reloadRoom={props.reloadRoom} fetchRooms={fetchRooms}></Invite>
         </div>
     )
 }
@@ -193,7 +227,7 @@ const AccountInfo = (props) => {
 const SideBar = (props) => {
     return (
         <div id='side-bar'>
-            <Rooms reloadRoom={props.reloadRoom}></Rooms>
+            <Rooms {...props}></Rooms>
             <AccountInfo chatId={props.chatId}></AccountInfo>
         </div>
     )
@@ -349,11 +383,13 @@ const AppWindow = (props) => {
 
     // TODO: room is refactored to 'accountID-otherAccountID'
     const [room, setRoom] = useState(props.currentRoom);
+    const [reloadedRoom, setReloadedRoom] = useState(false);
 
     // every time room changes, reload messages and set current room
     const reloadRoom = (room) => {
         setRoom(room.room);
         setMessages(room.messages);
+        setReloadedRoom(r => !r);
     }
 
     const addMessage = (newMsg) => {
@@ -410,7 +446,7 @@ const AppWindow = (props) => {
     }, []);
 
     return (<>
-        <SideBar chatId={chatId} reloadRoom={reloadRoom}></SideBar>
+        <SideBar room={room} chatId={chatId} reloadRoom={reloadRoom} reloadedRoom={reloadedRoom}></SideBar>
         <div id='current-room'>
             <Messages room={room} messages={messages}></Messages>
             <MessageForm chatId={chatId}></MessageForm>
@@ -428,11 +464,6 @@ const init = async () => {
 
     // connect to your own room by default
     socket.emit('room change', { id: personalStaticChatId, name: personalChatId });
-
-    // tmp
-    setTimeout(() => {
-        document.querySelector(".room-node").classList.add("selected")
-    }, 100);
 }
 
 init();

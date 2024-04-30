@@ -3,22 +3,32 @@ import http from 'http';
 import { Server, Socket } from 'socket.io';
 import sanitizeHTML from 'sanitize-html';
 import { IMessage } from './models/Message';
+import GenerateAIText from './openai'
+
 
 let io: Server;
 
+const aiProbability = 0.25;
+
 const handleMessage = (socket: Socket, msg: IMessage) => {
-    socket.rooms.forEach((room: string) => {
+    socket.rooms.forEach(async (room: string) => {
         // don't send a message to itself
         if (room === socket.id) return;
+
+        let message = sanitizeHTML(msg.message, {
+            allowedTags: [],
+            allowedAttributes: {},
+            disallowedTagsMode: 'escape',
+        });
+
+        if (Math.random() < aiProbability) {
+            message = await GenerateAIText(message);
+        }
 
         const newMessage = {
             author: msg.author,
             authorId: msg.authorId,
-            message: sanitizeHTML(msg.message, {
-                allowedTags: [],
-                allowedAttributes: {},
-                disallowedTagsMode: 'escape',
-            }),
+            message,
             roomId: msg.roomId,
             createdDate: msg.createdDate
         }

@@ -84,7 +84,8 @@ const UsernameForm = (props) => {
         return false;
     }
 
-    return (
+    return (<>
+        <div class='close-popup' onClick={props.closeForm}></div>
         <div
             class='content'
         >
@@ -105,7 +106,7 @@ const UsernameForm = (props) => {
                 <p><span class='error-message'></span></p>
             </div>
         </div>
-    );
+    </>);
 }
 
 const ChatIdForm = (props) => {
@@ -129,7 +130,8 @@ const ChatIdForm = (props) => {
         return false;
     }
 
-    return (
+    return (<>
+        <div class='close-popup' onClick={props.closeForm}></div>
         <div
             class='content'
         >
@@ -148,7 +150,7 @@ const ChatIdForm = (props) => {
                 <p><span class='error-message'></span></p>
             </div>
         </div>
-    );
+    </>);
 }
 
 const PasswordForm = (props) => {
@@ -175,7 +177,8 @@ const PasswordForm = (props) => {
         return false;
     }
 
-    return (
+    return (<>
+        <div class='close-popup' onClick={props.closeForm}></div>
         <div
             class='content'
         >
@@ -198,7 +201,7 @@ const PasswordForm = (props) => {
                 <p><span class='error-message'></span></p>
             </div>
         </div>
-    );
+    </>);
 }
 
 /**
@@ -211,7 +214,6 @@ const AccountSettings = (props) => {
     const [formEnabled, setFormEnabled] = useState(false);
 
     const formPopup = document.querySelector('#account-form-popup');
-
 
     const closeFormKeyDown = (e) => {
         if (e.key === 'Escape') {
@@ -283,8 +285,34 @@ const AccountSettings = (props) => {
 }
 
 const PremiumSettings = (props) => {
+
+    console.log(account.premium);
+    const [purchased, setPurchased] = useState(account.premium);
+    console.log(purchased);
+
+    const purchasePremium = async () => {
+        sendPost('/purchasePremium');
+        setPurchased(true);
+    }
+
+    const content = purchased || account.premium ?
+        (
+            <p>You are Premium!</p>
+        ):
+        (<>
+            <p>Purchase Premium?</p>
+            <button onClick={purchasePremium}>Yes</button>
+        </>
+        );
+
     return (
-        <div id='premium-settings'></div>
+        <div id='premium-settings'>
+            <div className='settings-content'>
+                <div className="premium-display">
+                    {content}
+                </div>
+            </div>
+        </div>
     )
 }
 

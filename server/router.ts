@@ -3,7 +3,6 @@ import * as mid from './middleware';
 import {
     Account, Message, ChatRoom, App, page404, page500,
 } from './controllers';
-
 const router = (app: express.Express) => {
     app.get('/', mid.requiresLogout, Account.loginPage);
 
@@ -23,10 +22,13 @@ const router = (app: express.Express) => {
     app.post('/secureAccount', mid.requiresSecure, mid.requiresLogin, Account.modifyAccountSecure);
     app.get('/account', mid.requiresSecure, mid.requiresLogin, Account.getAccount);
     app.get('/account/settings', mid.requiresSecure, mid.requiresLogin, Account.accountPage);
+    app.post('/purchasePremium', mid.requiresSecure, mid.requiresLogin, Account.purchasePremium);
 
     app.post('/createMessage', mid.requiresSecure, mid.requiresLogin, Message.createMessage);
     app.get('/getMessages', mid.requiresSecure, mid.requiresLogin, Message.getMessages);
+    
     app.post('/createAndGetRoom', mid.requiresSecure, mid.requiresLogin, ChatRoom.createAndGetRoom);
+    app.get('/getRooms', mid.requiresSecure, mid.requiresLogin, ChatRoom.getRooms);
 
     app.get('/about', App.aboutPage);
 

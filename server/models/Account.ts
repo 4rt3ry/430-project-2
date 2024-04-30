@@ -21,6 +21,7 @@ interface IAccount {
     acceptedChatId: boolean,
     chatId: string,
     staticChatId: string,
+    premium: boolean,
     rooms: {name: string, id: string}[],
     _id: ObjectId,
 }
@@ -70,6 +71,10 @@ const AccountSchema = new mongoose.Schema<IAccount, IAccountModel, IAccountMetho
     acceptedChatId: {
         type: Boolean,
         default: false,
+    },
+    premium: {
+        type: Boolean,
+        default: false
     },
     rooms: {
         type: [{ name: String, id: String }],

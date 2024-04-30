@@ -8,3 +8,10 @@ a:visited {
     color: var(--primary-dark);
 }
 
+nav a {
+    color: var(--color);
+}
+
+nav a:visited {
+    color: var(--color);
+}

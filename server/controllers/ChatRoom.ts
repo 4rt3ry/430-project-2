@@ -16,7 +16,7 @@ const createAndGetRoom = async (req: Request, res: Response) => {
 
     if (!otherUser) return res.status(400).json({ error: `User '${chatId}' does not exist` });
     if (!currentUser) return res.status(400).json({ error: `HUH, APPRENTLY YOUR ACCOUNT DOESN'T EXIST` });
-
+    if (currentUser.rooms.length >= 5) return res.status(402).json({ error: 'User must have premium to access more than 5 rooms' })
     const otherStaticChatId = otherUser.staticChatId;
     const staticChatId = currentUser.staticChatId;
     let roomId: string;
@@ -34,22 +34,61 @@ const createAndGetRoom = async (req: Request, res: Response) => {
         createdDate: m.createdDate
     }));
 
+    const room = {
+        id: roomId,
+        name: otherUser.chatId
+    };
+
     const result = {
-        room: {
-            id: roomId,
-            name: otherUser.chatId
-        },
+        room,
         messages
     };
+
+    try {
+
+        const roomExists = currentUser.rooms.some(r =>
+            r.id === room.id
+        );
+
+        if (!roomExists) {
+            await Account.updateOne(
+                { _id: req.session.account?._id },
+                { $push: { rooms: room } }
+            );
+        }
+    }
+    catch {
+        return res.status(500).json({ error: 'Problem updating user\'s list of rooms' })
+    }
 
     // I can't believe professor is teaching everyone's favorite class.
 
     return res.status(200).json(result);
 };
 
-// tmp to get rid of eslint error
-export default createAndGetRoom;
+/**
+ * Retrieve a list of the user's rooms
+ * @param req 
+ * @param res 
+ * @returns 
+ */
+const getRooms = async (req: Request, res: Response) => {
+    try {
+        const query = { _id: req.session.account?._id };
+        const docs = await Account.findOne(query).exec();
+
+        if (docs) {
+            return res.status(200).json({ rooms: docs.rooms });
+        }
+        return res.status(500).json({ error: 'Could not retrieve a list of rooms' });
+    }
+    catch {
+        return res.status(500).json({ error: 'Could not retrieve a list of rooms' });
+    }
+}
+
 
 export {
     createAndGetRoom,
+    getRooms
 };

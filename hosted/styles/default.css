@@ -37,7 +37,8 @@ p {
 
 /***************        forms            ********************/
 
-input[type='text'], input[type='password'] {
+input[type='text'],
+input[type='password'] {
     padding: 10px 10px;
     width: 100%;
     margin-top: 5px;
@@ -51,16 +52,19 @@ input[type='text'], input[type='password'] {
     /* outline: none; */
 }
 
-input[type='text']:focus, input[type='password']:focus {
+input[type='text']:focus,
+input[type='password']:focus {
     outline: solid white 1px;
 }
 
-input[type='text'].light-theme, input[type='password'].light-theme {
+input[type='text'].light-theme,
+input[type='password'].light-theme {
     background-color: var(--color-dark);
     color: var(--bgcolor-neutral);
 }
 
-input[type='text']:focus.light-theme, input[type='password']:focus.light-theme {
+input[type='text']:focus.light-theme,
+input[type='password']:focus.light-theme {
     outline: solid var(--bgcolor-neutral) 1px;
 }
 
@@ -109,7 +113,7 @@ button:hover {
 
 .ghost {
     color: var(--color);
-    filter:opacity(0.25);
+    filter: opacity(0.25);
     user-select: none;
 }
 
@@ -127,6 +131,27 @@ button:hover {
 
 .error-message {
     color: var(--color-error);
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: var(--bgcolor-light);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: var(--bgcolor-neutral);
+    border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: var(--bgcolor-dark);
 }
 
 /**********************      nav bar      *******************/
@@ -213,4 +238,15 @@ nav {
     list-style-type: none;
     background-color: var(--primary-dark);
     border-radius: 10px;
+}
+
+
+/*****************             popup           ********************/
+
+.close-popup {
+    position: absolute;
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
 }

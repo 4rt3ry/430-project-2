@@ -117,6 +117,23 @@ const checkUserChatId = async (req: Request, res: Response) => {
     }
 };
 
+const purchasePremium = async (req: Request, res: Response) => {
+    try {
+        const query = { _id: req.session.account?._id };
+        const updatedDoc = await Account.updateOne(
+            query,
+            {
+                $set: {premium: true},
+            },
+        );
+        if (updatedDoc) return res.status(200).json({message: 'Successfully purchased premium'});
+        return res.status(500).json({error: 'Something went wrong'});
+    }
+    catch {
+        return res.status(500).json({ error: 'Something went wrong' });
+    }
+}
+
 /**
  * Modify account data. 
  * To change username or password, use modifyAccountSecure
@@ -195,12 +212,12 @@ const modifyAccountSecure = async (req: Request, res: Response) => {
             const newPassword2 = (req.body.newPassword2 ?? "").trim();
 
             if (!password)
-                return res.status(400).json({error: 'Must supply a password'});
+                return res.status(400).json({ error: 'Must supply a password' });
 
             // ensure current password is correct before moving on
             const correctPass = await bcrypt.compare(password, docs.password);
             if (!correctPass) {
-                return res.status(400).json({error: 'Password is incorrect'});
+                return res.status(400).json({ error: 'Password is incorrect' });
             }
 
 
@@ -225,7 +242,7 @@ const modifyAccountSecure = async (req: Request, res: Response) => {
             // If user creates a new password, make sure to store the hash
             if (newPassword) {
                 if (newPassword !== newPassword2)
-                    return res.status(400).json({error: 'New passwords must match'});
+                    return res.status(400).json({ error: 'New passwords must match' });
                 if (validator.validate(newPassword)) {
                     const hash = await Account.generateHash(newPassword);
                     modifications.password = hash;
@@ -255,6 +272,8 @@ const modifyAccountSecure = async (req: Request, res: Response) => {
 }
 
 const getAccount = async (req: Request, res: Response) => {
+
+    // if user is expecting html, redirect to the page instead of json request
     if (req.headers.accept === 'text/html') return accountPage(req, res);
 
     try {
@@ -263,10 +282,11 @@ const getAccount = async (req: Request, res: Response) => {
 
         if (docs) {
             const account = {
-                username: docs?.username,
-                acceptedChatId: docs?.acceptedChatId,
-                acceptedTou: docs?.acceptedTOU,
-                chatId: docs?.chatId,
+                username: docs.username,
+                acceptedChatId: docs.acceptedChatId,
+                acceptedTou: docs.acceptedTOU,
+                chatId: docs.chatId,
+                premium: docs.premium
             };
             return res.status(200).json(account);
         }
@@ -284,6 +304,7 @@ export {
     accountPage,
     getPersonalChatId,
     checkUserChatId,
+    purchasePremium,
     modifyAccount,
     modifyAccountSecure,
     getAccount,
